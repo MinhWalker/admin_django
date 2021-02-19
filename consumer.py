@@ -1,6 +1,7 @@
-import json
+import pika, json, os, django
 
-import pika
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "admin.settings")
+django.setup()
 
 from products.models import Product
 
@@ -14,8 +15,8 @@ channel.queue_declare(queue='admin')
 
 def callback(ch, method, properties, body):
     print('Received in admin')
-    data = json.loads(body)
-    print(data)
+    id = json.loads(body)
+    print(id)
     product = Product.objects.get(id=id)
     product.likes = product.likes + 1
     product.save()
